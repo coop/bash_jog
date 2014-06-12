@@ -12,7 +12,7 @@ class PromptString
   COLOR_OUT = '\]'
 
   def self.prepare prompt_string
-<<EOP.gsub(ESC, BASH_ESC).chomp
+<<EOP.chomp
 function __git_in_repo() { __gitdir > /dev/null; }
 function __git_is_dirty() { git status --porcelain | grep -q .; }
 function __git_dirty() { __git_in_repo && __git_is_dirty && echo "$1"; }
@@ -23,7 +23,14 @@ EOP
   end
 
   def self.build &block
-    new(&block).string
+    new(&block).optimize
+  end
+
+  def optimize
+    string
+      .gsub(ESC, BASH_ESC)
+      .gsub('\]\[', '')
+      .gsub(/\\e\[(\d+)m\\e\[(\d+)/, '\e[\1;\2')
   end
 
   def string
