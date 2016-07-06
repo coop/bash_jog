@@ -5,7 +5,7 @@ prompt = PromptString.build do
     color :white, "("
   }
   command CommandWrappedString.build("__git_dirty") {
-    color :magenta, "✗"
+    color :red, "✗"
   }
   command CommandWrappedString.build("__git_clean") {
     color :green, "✓"
