@@ -1,15 +1,14 @@
 require_relative 'bash_prompt'
-require_relative 'unicode_escaper'
 
 prompt = PromptString.build do
   command CommandWrappedString.build("__git_ps1") {
     color :white, "("
   }
   command CommandWrappedString.build("__git_dirty") {
-    color :magenta, UnicodeEscaper.escape("✗")
+    color :magenta, "✗"
   }
   command CommandWrappedString.build("__git_clean") {
-    color :green, UnicodeEscaper.escape("✓")
+    color :green, "✓"
   }
   command CommandWrappedString.build("__git_ps1") {
     bare ' '
