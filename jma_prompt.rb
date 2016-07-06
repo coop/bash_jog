@@ -16,6 +16,9 @@ prompt = PromptString.build do
     color :white, ")"
     bare ' '
   }
+  command CommandWrappedString.build("__jobs_any") {
+    color :yellow, "ꕚ "
+  }
   color :cyan, '\w'
   color :yellow, '\$'
   bare ' '
