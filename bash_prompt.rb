@@ -13,11 +13,31 @@ class PromptString
 
   def self.prepare prompt_string
 <<EOP.chomp
-function __git_in_repo() { __gitdir > /dev/null; }
-function __git_is_dirty() { git status --porcelain | grep -q .; }
-function __git_dirty() { __git_in_repo && __git_is_dirty && echo "$1"; }
-function __git_clean() { __git_in_repo && (__git_is_dirty || echo "$1"); }
-function __jobs_any() { jobs | grep -q . && echo "$1"; }
+__ssh_connected() {
+  [[ -n "$SSH_CONNECTION" ]] && echo "$1"
+}
+__gitdir() {
+  if [ -z "${1-}" ]; then
+    if [ -n "${__git_dir-}" ]; then
+      echo "$__git_dir"
+    elif [ -n "${GIT_DIR-}" ]; then
+      test -d "${GIT_DIR-}" || return 1
+      echo "$GIT_DIR"
+    elif [ -d .git ]; then
+      echo .git
+    else
+      git rev-parse --git-dir 2>/dev/null
+    fi
+  elif [ -d "$1/.git" ]; then
+    echo "$1/.git"
+  else
+    echo "$1"
+  fi
+}
+__git_in_repo() { __gitdir > /dev/null; }
+__git_is_dirty() { git status --porcelain | grep -q .; }
+__git_dirty() { __git_in_repo && __git_is_dirty && echo "$1"; }
+__git_clean() { __git_in_repo && (__git_is_dirty || echo "$1"); }
 
 export PS1='#{prompt_string}'
 EOP
@@ -54,6 +74,14 @@ EOP
 
   def bare str
     @buf << str
+  end
+
+  def new_line
+    @buf << '\n'
+  end
+
+  def space
+    @buf << ' '
   end
 end
 
